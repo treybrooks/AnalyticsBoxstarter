@@ -1,0 +1,116 @@
+#Analytics Setup
+#ipython
+#weird numpy
+#various python packages via pip
+#	* pip setup.py
+#PyCharm (optional)
+
+#ShrewSoft
+#SQL Server
+#Office
+#Outlook
+#sshkeygen
+
+
+# Invoke using following syntax into IE:
+# http://boxstarter.org/package/url?<WHATEVERURLIGET>
+# Boxstarter options
+$Boxstarter.RebootOk=$true
+$Boxstarter.NoPassword=$false # Is this a machine with no logon password?
+$Boxstarter.AutoLogin=$true
+
+# Set Windows variables
+Enable-RemoteDesktop
+Set-WindowsExplorerOptions -showHidenFilesFoldersDrives -enableshowFileExtensions -enableshowProtectedOSFiles
+Disable-InternetExplorerESC
+Update-ExecutionPolicy Unrestricted
+
+# Setting Time Zone
+Write-BoxstarterMessage "Setting time zone to Central Standard Time"
+& C:\Windows\system32\tzutil /s "Central Standard Time"
+
+# Set Windows power options
+Write-BoxstarterMessage "Setting Standby Timeout to Never"
+powercfg -change -standby-timeout-ac 0
+powercfg -change -standby-timeout-dc 0
+
+Write-BoxstarterMessage "Setting Monitor Timeout to 20 minutes"
+powercfg -change -monitor-timeout-ac 30
+powercfg -change -monitor-timeout-dc 30
+
+Write-BoxstarterMessage "Setting Disk Timeout to Never"
+powercfg -change -disk-timeout-ac 0
+powercfg -change -disk-timeout-dc 0
+
+# AC lid close action (do nothing)
+powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
+
+# DC lid close action (sleep)
+powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 1
+
+Write-BoxstarterMessage "Turning off Windows Hibernation"
+powercfg -h off
+
+
+### INSTALL STUFF ###
+# Install .NET
+cinst -y dotnet4.6
+
+# Install Browsers
+cinst -y google-chrome-x64
+cinst -y firefox
+
+# Install Git
+cinst -y git.install
+
+# Install Other software
+cinst -y 7zip
+cinst -y ccleaner
+cinst -y defraggler
+cinst -y greenshot
+cinst -y paint.net
+cinst -y spotify
+cinst -y evernote
+cinst -y vlc
+cinst -y winmerge
+cinst -y malwarebytes
+cinst -y windirstat
+cinst -y adobereader
+cinst -y putty
+cinst -y chocolateygui
+cinst -y mysql
+cinst -y mysql.workbench
+cinst -y notepadplusplus
+cinst -y sql2012.nativeclient
+cinst -y shrewsoftvpn
+cinst -y pycharm-community
+cinst -y python
+cinst -y pip
+cinst -y slack
+cinst -y skype
+
+# File associations
+Install-ChocolateyFileAssociation ".txt" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".xml" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".config" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".json" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".js" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".css" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".html" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".htm" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".sql" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+Install-ChocolateyFileAssociation ".py" "$($Boxstarter.programFiles86)\Notepad++\notepad++.exe"
+
+# Icons in task bar
+Install-ChocolateyPinnedTaskBarItem "$($Boxstarter.programFiles86)\Google\Chrome\Application\chrome.exe"
+
+# Scaffold out folder system
+# C:\Work
+if (!(Test-Path -Path C:\Work )) {
+  mkdir C:\Work
+}
+
+# Install Windows Updates
+Install-WindowsUpdate -AcceptEula
+
+Write-BoxstarterMessage "Machine is complete!"
